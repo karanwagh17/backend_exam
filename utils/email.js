@@ -9,12 +9,12 @@ const sendMail = async (usermail, htmltemplate, subject) => {
     },
   });
   const info = await transporter.sendMail({
-    from: process.env.HOST, // sender address
-    to: usermail, // list of receivers
-    subject: subject, // Subject line
-    html: htmltemplate, // html body
+    from: process.env.HOST,
+    to: usermail,
+    subject: subject,
+    html: htmltemplate,
   });
-    return info;
+  return info;
 };
 
 module.exports = sendMail;

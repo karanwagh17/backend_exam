@@ -2,7 +2,8 @@ const UserModel = require("../model/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const ejs = require("ejs");
-const email = require("../utils/email");
+const {sendMail} = require("../utils/email");
+require("dotenv").config();
 
 const user = {
   register: async (req, res) => {
@@ -22,11 +23,9 @@ const user = {
         .json({ message: "Password must be at least 8 characters long" });
     }
     if (!uppercaseRegex.test(password)) {
-      return res
-        .status(400)
-        .json({
-          message: "Password must contain at least one uppercase letter",
-        });
+      return res.status(400).json({
+        message: "Password must contain at least one uppercase letter",
+      });
     }
     if (!numberRegex.test(password)) {
       return res
@@ -34,11 +33,9 @@ const user = {
         .json({ message: "Password must contain at least one number" });
     }
     if (!specialCharRegex.test(password)) {
-      return res
-        .status(400)
-        .json({
-          message: "Password must contain at least one special character",
-        });
+      return res.status(400).json({
+        message: "Password must contain at least one special character",
+      });
     }
 
     try {
@@ -89,12 +86,10 @@ const user = {
       });
 
       const htmltemplate = await ejs.renderFile(
-        __dirname + "/../views/conform.ejs",
-        {
-          name: user.name,
-        }
+        __dirname + "/../view/confirm.ejs",
+        { name: user.name }
       );
-      await email(user.email, htmltemplate, "Confirmation Message");
+    //   await sendMail(user.email, htmltemplate, "Confirmation Message");
       res
         .cookie("token", token, {
           httpOnly: true,
@@ -112,7 +107,7 @@ const user = {
           },
         });
     } catch (error) {
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: error.message });
     }
   },
 
