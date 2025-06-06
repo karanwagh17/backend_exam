@@ -89,7 +89,7 @@ const user = {
         __dirname + "/../view/confirm.ejs",
         { name: user.name }
       );
-    //   await sendMail(user.email, htmltemplate, "Confirmation Message");
+      await sendMail(user.email, htmltemplate, "Confirmation Message");
       res
         .cookie("token", token, {
           httpOnly: true,
