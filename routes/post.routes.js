@@ -4,8 +4,9 @@ const post = require("../controllers/post.controller");
 const Auth = require("../middle/auth");
 
 const postRouter = express.Router();
-postRouter.post("/add",Auth,post.addPost); 
+postRouter.post("/add", Auth, post.addPost);
 postRouter.get("/get", Auth, post.getPosts);
 postRouter.put("/update/:postId/:userId", Auth, post.updatePost);
+userRouter.delete("/delete/:userId/:postId", Auth, user.deletePost);
 
 module.exports = postRouter;
