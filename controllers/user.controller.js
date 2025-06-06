@@ -1,6 +1,8 @@
 const UserModel = require("../model/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const ejs = require("ejs");
+const email = require("../utils/email");
 const user = {
   register: async (req, res) => {
     const { name, email, password, age, city } = req.body;
@@ -77,7 +79,7 @@ const user = {
         { userId: user._id },
         process.env.JWT_SECRET,
         {
-          expiresIn: "1h",
+          expiresIn: "7m",
         }
       );
       res
@@ -96,6 +98,25 @@ const user = {
             city: user.city,
           },
         });
+      const htmltemplate = await ejs.renderFile(
+        __dirname + "/../views/conform.ejs",
+        {
+          name: user.name,
+        }
+      );
+
+      await email(userData.email, htmltemplate, " conformationn message");
+      return res.status(200).json({ message: "accoun created" });
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
+  logout: async (req, res) => {
+    try {
+      res
+        .clearCookie("token")
+        .status(200)
+        .json({ message: "User logged out successfully" });
     } catch (error) {
       res.status(500).json({ message: "Internal server error" });
     }
