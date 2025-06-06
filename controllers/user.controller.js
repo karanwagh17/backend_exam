@@ -2,7 +2,8 @@ const UserModel = require("../model/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const ejs = require("ejs");
-const {sendMail} = require("../utils/email");
+// const {sendMail} = require("../utils/email");
+const sendMail = require("../utils/email");
 require("dotenv").config();
 
 const user = {
@@ -85,11 +86,6 @@ const user = {
         expiresIn: "7m",
       });
 
-      const htmltemplate = await ejs.renderFile(
-        __dirname + "/../view/confirm.ejs",
-        { name: user.name }
-      );
-      await sendMail(user.email, htmltemplate, "Confirmation Message");
       res
         .cookie("token", token, {
           httpOnly: true,
@@ -106,6 +102,12 @@ const user = {
             city: user.city,
           },
         });
+
+      const htmltemplate = await ejs.renderFile(
+        __dirname + "/../view/confirm.ejs",
+        { name: user.name }
+      );
+      await sendMail(user.email, htmltemplate, "Confirmation Message");
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
