@@ -42,16 +42,15 @@ const post = {
   },
   updatePost: async (req, res) => {
     const { postId, userId } = req.params;
+    const authorId = req.user.userId;
+    console.log(authorId, userId, postId);
     const { title, content } = req.body;
+    console.log(req.params);
 
-    if (req.user.userId !== userId) {
-      return res.status(403).json({ message: "You are not delete this post" });
+    if (authorId != userId) {
+      return res.status(403).json({ message: "You are not update this post" });
     }
-    if (!title || !content) {
-      return res
-        .status(400)
-        .json({ message: "Title and content are required" });
-    }
+
     const updateData = { ...req.body };
     try {
       const post = await PostModel.findByIdAndUpdate(
@@ -69,5 +68,26 @@ const post = {
         .json({ message: error.message || "Internal server error" });
     }
   },
+  deletePost: async (req, res) => {
+    const { postId, userId } = req.params;
+    const authorId = req.user.userId;
+
+    if (authorId != userId) {
+      return res.status(403).json({ message: "You are not delete this" });
+    }
+    try {
+      const post = await PostModel.findByIdAndDelete(postId);
+      if (!post) {
+        return res.status(404).json({ message: "Post not found" });
+      }
+      res.status(200).json({ message: "Post deleted successfully" });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: error.message});
+    }
+}
+
+  
 };
 module.exports = post;
